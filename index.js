@@ -1,10 +1,16 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+
+const config = require('./config/key')
+
+const { User } = require("./models/user.js");
 
 mongoose
   .connect(
-    "mongodb+srv://KenChen:a5711860@reacgt-blog.mb4oi.mongodb.net/<dbname>?retryWrites=true&w=majority",
+    config.mongoURI,
     { useNewUrlParser: true }
   )
   .then(() => {
@@ -14,12 +20,26 @@ mongoose
     console.log(err);
   });
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cookieParser());
+
+app.get('/', (req, res) => {
+  res.json({"hello ~":"Hi ~~"})
+})
+
+app.post("/api/users/register", (req, res) => {
+  const user = new User(req.body);
+
+  user.save((err, userData) => {
+    if (err) return res.json({ success: false, err });
+  });
+
+  return res.status(200).json({
+    success: true,
+  });
 });
 
-
-
-
-app.listen(5000,()=>{console.log('server is running...')});
- 
+app.listen(5000, () => {
+  console.log("server is running...");
+});
