@@ -34,7 +34,7 @@ app.get("/api/user/auth", auth, (req, res) => {
     name: req.user.name,
     lastname: req.user.lastname,
     role: req.user.role,
-    token:req.user.token
+    token: req.user.token,
   });
 });
 
@@ -58,7 +58,7 @@ app.post("/api/user/login", (req, res) => {
         loginSuccess: false,
         message: "Auth failed, email not found",
       });
-    
+
     // comparePassword
     user.comparePassword(req.body.password, (err, isMatch) => {
       if (!isMatch) {
@@ -72,6 +72,15 @@ app.post("/api/user/login", (req, res) => {
       res.cookie("x_auth", user.token).status(200).json({
         loginSuccess: true,
       });
+    });
+  });
+});
+
+app.get("/api/user/logout", auth, (req, res) => {
+  User.findOneAndUpdate({ _id: req.user._id }, { token: "" }, (err, doc) => {
+    if (err) return res.json({ success: false, err });
+    return res.status(200).send({
+      success: true,
     });
   });
 });
