@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
-  res.json({ "hello ~": "Hi ~~" });
+  res.json({ "hello": "I am happy to deploy our application" });
 });
 
 app.get("/api/user/auth", auth, (req, res) => {
